@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Toggle Image Settings",
+  "version": "1.1",
+  "description": "Toggle the setting to allow or disallow sites to show images",
+  "permissions": ["contentSettings", "activeTab", "tabs", "alarms", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
+}
