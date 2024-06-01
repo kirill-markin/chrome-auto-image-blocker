@@ -2,12 +2,18 @@
 
 Chrome Auto Image Blocker is a lightweight Chrome extension designed to improve your browsing experience by automatically blocking and toggling images on webpages based on a customizable schedule. Reduce distractions and speed up page load times with ease.
 
+## Screenshots
+
+| ![YouTube example](screenshots/screenshot-1-youtube.jpg) | ![Instagram example](screenshots/screenshot-2-instagram.jpg) |
+|:---------------------------------------------:|:---------------------------------------------:|
+| Screenshot 1                                  | Screenshot 2                                  |
+
 ## Features
 
 - Auto-blocks images every 10 minutes by default.
 - Manual toggle to enable or disable images instantly.
 - Customizable interval for automatic image blocking.
-- No user interface 😁.
+- Almost no user interface 😁.
 - Lightweight and efficient.
 
 ## Installation
@@ -29,11 +35,6 @@ Chrome Auto Image Blocker is a lightweight Chrome extension designed to improve 
 - Click the extension icon in the Chrome toolbar to open the popup.
 - Use the "Toggle Image Settings" button to enable or disable images manually.
 - Set your preferred interval for automatic image blocking.
-
-<!-- ## Screenshots
-
-![screenshot1](path_to_screenshot1.png)
-![screenshot2](path_to_screenshot2.png) -->
 
 ## How It Works
 
