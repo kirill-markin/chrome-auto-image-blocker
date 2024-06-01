@@ -13,8 +13,8 @@ document.getElementById('toggleImages').addEventListener('click', () => {
 
 document.getElementById('setInterval').addEventListener('click', () => {
   const interval = parseInt(document.getElementById('intervalInput').value, 10);
-  if (isNaN(interval) || interval <= 0) {
-    alert("Please enter a valid number greater than 0");
+  if (isNaN(interval) || interval < 0) {
+    alert("Please enter a valid number greater than 0 or 0 to disable the alarm.");
     return;
   }
 

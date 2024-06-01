@@ -4,10 +4,40 @@ function setImagesSetting(setting) {
     setting: setting
   }, () => {
     if (chrome.runtime.lastError) {
-      console.error("Error setting new setting:", chrome.runtime.lastError);
+      console.error("Error setting new setting:", chrome.runtime.lastError.message);
     } else {
       console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
       refreshCurrentTab();
+    }
+  });
+}
+
+function getCurrentSetting(callback) {
+  const patterns = ['http://*/*', 'https://*/*'];
+  let results = [];
+  
+  patterns.forEach((pattern, index) => {
+    chrome.contentSettings.images.get({ primaryUrl: pattern }, (details) => {
+      if (chrome.runtime.lastError) {
+        console.error(`Error getting current setting for ${pattern}:`, chrome.runtime.lastError.message);
+      } else if (details) {
+        results.push(details.setting);
+        if (results.length === patterns.length) {
+          callback(results[0]); // Assuming all patterns have the same setting
+        }
+      } else {
+        console.error(`Failed to get current setting details for ${pattern}.`);
+      }
+    });
+  });
+}
+
+function setImagesSettingIfNeeded(setting) {
+  getCurrentSetting((currentSetting) => {
+    if (currentSetting !== setting) {
+      setImagesSetting(setting);
+    } else {
+      console.log(`Images setting is already ${setting === 'allow' ? 'allowed' : 'blocked'}. No change needed.`);
     }
   });
 }
@@ -23,19 +53,24 @@ function toggleImagesSetting() {
 
     chrome.contentSettings.images.get({ primaryUrl: currentUrl }, (details) => {
       if (chrome.runtime.lastError) {
-        console.error("Error getting current setting:", chrome.runtime.lastError);
+        console.error("Error getting current setting:", chrome.runtime.lastError.message);
         return;
       }
 
-      const newSetting = details.setting === 'allow' ? 'block' : 'allow';
-      setImagesSetting(newSetting);
+      if (details) {
+        const currentSetting = details.setting;
+        const newSetting = currentSetting === 'allow' ? 'block' : 'allow';
+        setImagesSettingIfNeeded(newSetting);
+      } else {
+        console.error("Failed to get current setting details.");
+      }
     });
   });
 }
 
 function disableImagesAutomatically() {
   console.log("Disabling images automatically");
-  setImagesSetting('block');
+  setImagesSettingIfNeeded('block');
 }
 
 function refreshCurrentTab() {
@@ -48,9 +83,14 @@ function refreshCurrentTab() {
 
 function setAlarm() {
   chrome.storage.sync.get(['interval'], (result) => {
-    const interval = result.interval || 10; // Default to 10 minutes if not set
-    chrome.alarms.create('disableImages', { periodInMinutes: interval });
-    console.log(`Alarm set to disable images every ${interval} minutes`);
+    const interval = result.interval;
+    if (interval === 0) {
+      console.log("Interval is set to 0. No alarm will be set.");
+      return;
+    }
+    const alarmInterval = interval || 10; // Default to 10 minutes if not set
+    chrome.alarms.create('disableImages', { periodInMinutes: alarmInterval });
+    console.log(`Alarm set to disable images every ${alarmInterval} minutes`);
   });
 }
 
@@ -84,6 +124,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.sync.set({ interval: request.interval }, () => {
       console.log(`Interval set to ${request.interval} minutes`);
       setAlarm();
+      sendResponse({ status: "done" });
     });
   }
+  return true; // Indicate that the response is asynchronous
 });
