@@ -4,7 +4,7 @@ Chrome Auto Image Blocker is a lightweight Chrome extension designed to improve 
 
 ## Screenshots
 
-| ![YouTube example](screenshots/screenshot-1-youtube.jpg) | ![Instagram example](screenshots/screenshot-2-instagram.jpg) |
+| ![YouTube example](screenshots/screenshot-1-youtube.png) | ![Instagram example](screenshots/screenshot-2-instagram.png) |
 |:---------------------------------------------:|:---------------------------------------------:|
 | Screenshot 1                                  | Screenshot 2                                  |
 
