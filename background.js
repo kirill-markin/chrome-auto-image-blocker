@@ -7,7 +7,7 @@ function setImagesSetting(setting) {
       console.error("Error setting new setting:", chrome.runtime.lastError.message);
     } else {
       console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
-      refreshCurrentTab();
+      checkAndRefreshCurrentTab();
     }
   });
 }
@@ -73,10 +73,21 @@ function disableImagesAutomatically() {
   setImagesSettingIfNeeded('block');
 }
 
-function refreshCurrentTab() {
+function checkAndRefreshCurrentTab() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
-      chrome.tabs.reload(tabs[0].id);
+      const tabId = tabs[0].id;
+      chrome.tabs.get(tabId, (tab) => {
+        // If audio is playing in the tab, don't reload it
+        // For example, if the user is watching a video on YouTube
+        // user might not want the video to be interrupted
+        if (tab.audible) {
+          console.log("Audio is currently playing in the tab. Skipping tab reload.");
+        } else {
+          chrome.tabs.reload(tabId);
+          console.log("Tab reloaded to apply new images setting.");
+        }
+      });
     }
   });
 }
