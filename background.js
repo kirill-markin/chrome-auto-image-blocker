@@ -1,77 +1,98 @@
-function setImagesSetting(setting) {
-  chrome.contentSettings.images.set({
-    primaryPattern: '<all_urls>',
-    setting: setting
-  }, () => {
-    if (chrome.runtime.lastError) {
-      console.error("Error setting new setting:", chrome.runtime.lastError.message);
-    } else {
-      console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
-      checkAndRefreshCurrentTab();
-      resetAlarm();
-    }
-  });
-}
-
-function getCurrentSetting(callback) {
-  const patterns = ['http://*/*', 'https://*/*'];
-  let results = [];
-  
-  patterns.forEach((pattern, index) => {
+// Utility functions
+async function getImageSettingForPattern(pattern) {
+  return new Promise((resolve, reject) => {
     chrome.contentSettings.images.get({ primaryUrl: pattern }, (details) => {
       if (chrome.runtime.lastError) {
         console.error(`Error getting current setting for ${pattern}:`, chrome.runtime.lastError.message);
+        reject(chrome.runtime.lastError);
       } else if (details) {
-        results.push(details.setting);
-        if (results.length === patterns.length) {
-          callback(results[0]); // Assuming all patterns have the same setting
-        }
+        resolve(details.setting);
       } else {
         console.error(`Failed to get current setting details for ${pattern}.`);
+        reject(new Error('No details found'));
       }
     });
   });
 }
 
-function setImagesSettingIfNeeded(setting) {
-  getCurrentSetting((currentSetting) => {
-    if (currentSetting !== setting) {
-      setImagesSetting(setting);
-    } else {
-      console.log(`Images setting is already ${setting === 'allow' ? 'allowed' : 'blocked'}. No change needed.`);
-    }
+async function getCurrentSetting() {
+  const patterns = ['http://*/*', 'https://*/*'];
+  const results = await Promise.all(patterns.map(getImageSettingForPattern));
+  return results[0]; // Assuming all patterns have the same setting
+}
+
+async function getCurrentTabUrl() {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length === 0) {
+        console.error("No active tab found");
+        reject(new Error("No active tab found"));
+      } else {
+        resolve(tabs[0].url);
+      }
+    });
   });
 }
 
-function toggleImagesSetting() {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs.length === 0) {
-      console.error("No active tab found");
-      return;
-    }
-
-    const currentUrl = tabs[0].url;
-
-    chrome.contentSettings.images.get({ primaryUrl: currentUrl }, (details) => {
+async function getCurrentTabSetting(url) {
+  return new Promise((resolve, reject) => {
+    chrome.contentSettings.images.get({ primaryUrl: url }, (details) => {
       if (chrome.runtime.lastError) {
         console.error("Error getting current setting:", chrome.runtime.lastError.message);
-        return;
-      }
-
-      if (details) {
-        const currentSetting = details.setting;
-        const newSetting = currentSetting === 'allow' ? 'block' : 'allow';
-        setImagesSettingIfNeeded(newSetting);
+        reject(chrome.runtime.lastError);
+      } else if (details) {
+        resolve(details.setting);
       } else {
         console.error("Failed to get current setting details.");
+        reject(new Error("No details found"));
       }
     });
   });
 }
 
-function disableImagesAutomatically() {
+// Main functions
+async function setImagesSetting(setting) {
+  return new Promise((resolve, reject) => {
+    chrome.contentSettings.images.set({
+      primaryPattern: '<all_urls>',
+      setting: setting
+    }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error setting new setting:", chrome.runtime.lastError.message);
+        reject(chrome.runtime.lastError);
+      } else {
+        console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
+        checkAndRefreshCurrentTab();
+        resetAlarm();
+        resolve();
+      }
+    });
+  });
+}
+
+async function setImagesSettingIfNeeded(setting) {
+  const currentSetting = await getCurrentSetting();
+  if (currentSetting !== setting) {
+    await setImagesSetting(setting);
+  } else {
+    console.log(`Images setting is already ${setting === 'allow' ? 'allowed' : 'blocked'}. No change needed.`);
+  }
+}
+
+async function toggleImagesSetting() {
+  try {
+    const currentUrl = await getCurrentTabUrl();
+    const currentSetting = await getCurrentTabSetting(currentUrl);
+    const newSetting = currentSetting === 'allow' ? 'block' : 'allow';
+    await setImagesSettingIfNeeded(newSetting);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+async function disableImagesAutomatically() {
   console.log("Disabling images automatically");
-  setImagesSettingIfNeeded('block');
+  await setImagesSettingIfNeeded('block');
 }
 
 function checkAndRefreshCurrentTab() {
@@ -79,9 +100,6 @@ function checkAndRefreshCurrentTab() {
     if (tabs.length > 0) {
       const tabId = tabs[0].id;
       chrome.tabs.get(tabId, (tab) => {
-        // If audio is playing in the tab, don't reload it
-        // For example, if the user is watching a video on YouTube
-        // user might not want the video to be interrupted
         if (tab.audible) {
           console.log("Audio is currently playing in the tab. Skipping tab reload.");
         } else {
@@ -117,21 +135,19 @@ function resetAlarm() {
   });
 }
 
-// Set images to disabled when the extension is first installed or reloaded
+// Event listeners
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed or reloaded, disabling images by default");
   disableImagesAutomatically();
   setAlarm();
 });
 
-// Ensure images are disabled when the browser starts
 chrome.runtime.onStartup.addListener(() => {
   console.log("Browser startup, disabling images by default");
   disableImagesAutomatically();
   setAlarm();
 });
 
-// Listen for the alarm to disable images
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'disableImages') {
     disableImagesAutomatically();
@@ -141,8 +157,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'toggleImagesSetting') {
     console.log("Received message to toggle images setting");
-    toggleImagesSetting();
-    sendResponse({ status: "done" });
+    toggleImagesSetting().then(() => sendResponse({ status: "done" })).catch(() => sendResponse({ status: "error" }));
   } else if (request.action === 'setInterval') {
     chrome.storage.sync.set({ interval: request.interval }, () => {
       console.log(`Interval set to ${request.interval} minutes`);
