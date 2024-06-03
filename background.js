@@ -8,6 +8,7 @@ function setImagesSetting(setting) {
     } else {
       console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
       checkAndRefreshCurrentTab();
+      resetAlarm();
     }
   });
 }
@@ -102,6 +103,17 @@ function setAlarm() {
     const alarmInterval = interval || 10; // Default to 10 minutes if not set
     chrome.alarms.create('disableImages', { periodInMinutes: alarmInterval });
     console.log(`Alarm set to disable images every ${alarmInterval} minutes`);
+  });
+}
+
+function resetAlarm() {
+  chrome.alarms.clear('disableImages', (wasCleared) => {
+    if (wasCleared) {
+      console.log("Previous alarm cleared. Setting a new alarm.");
+      setAlarm();
+    } else {
+      console.error("Failed to clear the previous alarm.");
+    }
   });
 }
 
