@@ -26,6 +26,10 @@ document.getElementById('setInterval').addEventListener('click', () => {
 
 // Load current interval value
 chrome.storage.sync.get(['interval'], (result) => {
-  const interval = result.interval || 10; // Default to 10 minutes if not set
-  document.getElementById('intervalInput').value = interval;
+  // No default value here to avoid overwriting the stored 0 value
+  if (result.interval !== undefined) {
+    document.getElementById('intervalInput').value = result.interval;
+  } else {
+    document.getElementById('intervalInput').value = 10; // Default to 10 minutes if not set
+  }
 });
