@@ -1,0 +1,10 @@
+.btn{
+    background-color: #6610f2;
+    font-weight: bolder;
+    color: white;
+    border-radius: 10%;
+    border-color:white;
+}
+*{
+    font-family: monospace;
+}
