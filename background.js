@@ -62,6 +62,12 @@ async function setImagesSetting(setting) {
         reject(chrome.runtime.lastError);
       } else {
         console.log(`Images are now ${setting === 'allow' ? 'allowed' : 'blocked'}.`);
+        // Save the current state to storage
+        chrome.storage.sync.set({ imagesSetting: setting }, () => {
+          if (chrome.runtime.lastError) {
+            console.error("Error saving images setting:", chrome.runtime.lastError.message);
+          }
+        });
         checkAndRefreshCurrentTab();
         resetAlarm();
         resolve();
@@ -95,6 +101,18 @@ async function disableImagesAutomatically() {
   await setImagesSettingIfNeeded('block');
 }
 
+async function applySavedImagesSetting() {
+  chrome.storage.sync.get(['imagesSetting', 'interval'], async (result) => {
+    const setting = result.imagesSetting || 'block'; // Default to 'block' if not set
+    await setImagesSetting(setting);
+
+    if (result.interval !== 0 && setting === 'allow') {
+      console.log("Interval is not zero and images are allowed, setting the timer");
+      setAlarm();
+    }
+  });
+}
+
 function checkAndRefreshCurrentTab() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
@@ -125,26 +143,33 @@ function setAlarm() {
 }
 
 function resetAlarm() {
-  chrome.alarms.clear('disableImages', (wasCleared) => {
-    if (wasCleared) {
-      console.log("Previous alarm cleared. Setting a new alarm.");
-      setAlarm();
+  chrome.alarms.get('disableImages', (alarm) => {
+    if (alarm) {
+      chrome.alarms.clear('disableImages', (wasCleared) => {
+        if (wasCleared) {
+          console.log("Previous alarm cleared. Setting a new alarm.");
+          setAlarm();
+        } else {
+          console.error("Failed to clear the previous alarm.");
+        }
+      });
     } else {
-      console.error("Failed to clear the previous alarm.");
+      console.log("No previous alarm to clear. Setting a new alarm.");
+      setAlarm();
     }
   });
 }
 
 // Event listeners
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("Extension installed or reloaded, disabling images by default");
-  disableImagesAutomatically();
+  console.log("Extension installed or reloaded, applying saved image setting");
+  applySavedImagesSetting();
   setAlarm();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  console.log("Browser startup, disabling images by default");
-  disableImagesAutomatically();
+  console.log("Browser startup, applying saved image setting");
+  applySavedImagesSetting();
   setAlarm();
 });
 
