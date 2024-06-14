@@ -1,4 +1,4 @@
-# Chrome Auto Image Blocker
+# Chrome Extension Auto Image Blocker
 
 Chrome Auto Image Blocker is a lightweight Chrome extension designed to improve your browsing experience by automatically blocking and toggling images on webpages based on a customizable schedule. Reduce distractions and speed up page load times with ease.
 
