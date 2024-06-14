@@ -28,3 +28,5 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+repo-to-text_*.txt
