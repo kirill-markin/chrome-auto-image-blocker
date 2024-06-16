@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Toggle Image Settings",
-  "version": "1.1",
-  "description": "Toggle the setting to allow or disallow sites to show images",
+  "name": "Auto Image Blocker",
+  "version": "1.2",
+  "description": "Automatically block images on websites to reduce distractions and improve page load times. Customize intervals for automatic image blocking and easily toggle image settings manually.",
   "permissions": ["contentSettings", "activeTab", "tabs", "alarms", "storage"],
   "background": {
     "service_worker": "background.js"
