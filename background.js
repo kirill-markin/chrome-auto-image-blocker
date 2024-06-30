@@ -68,7 +68,6 @@ async function setImagesSetting(setting) {
             console.error("Error saving images setting:", chrome.runtime.lastError.message);
           }
         });
-        checkAndRefreshCurrentTab();
         resetAlarm();
         resolve();
       }
@@ -91,6 +90,7 @@ async function toggleImagesSetting() {
     const currentSetting = await getCurrentTabSetting(currentUrl);
     const newSetting = currentSetting === 'allow' ? 'block' : 'allow';
     await setImagesSettingIfNeeded(newSetting);
+    refreshCurrentTab();
   } catch (error) {
     console.error(error.message);
   }
@@ -113,17 +113,12 @@ async function applySavedImagesSetting() {
   });
 }
 
-function checkAndRefreshCurrentTab() {
+function refreshCurrentTab() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
       const tabId = tabs[0].id;
       chrome.tabs.get(tabId, (tab) => {
-        if (tab.audible) {
-          console.log("Audio is currently playing in the tab. Skipping tab reload.");
-        } else {
-          chrome.tabs.reload(tabId);
-          console.log("Tab reloaded to apply new images setting.");
-        }
+        chrome.tabs.reload(tabId);
       });
     }
   });
