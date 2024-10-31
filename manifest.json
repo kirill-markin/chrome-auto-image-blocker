@@ -1,7 +1,7 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 4,
   "name": "Auto Image Blocker",
-  "version": "1.2",
+  "version": "1.3",
   "description": "Automatically block images on websites to reduce distractions and improve page load times. Customize intervals for automatic image blocking and easily toggle image settings manually.",
   "permissions": ["contentSettings", "activeTab", "tabs", "alarms", "storage"],
   "background": {
