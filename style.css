@@ -1,10 +1,198 @@
-.btn{
-    background-color: #6610f2;
-    font-weight: bolder;
+body {
+  width: 230px;
+  padding: 20px;
+  background-color: #0D151D;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .toggle-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #0052cc;
+    border: none;
     color: white;
-    border-radius: 10%;
-    border-color:white;
-}
-*{
-    font-family: monospace;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    box-shadow: 0 0 0 2px transparent;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  
+  .toggle-button:hover {
+    transform: scale(1.02);
+  }
+
+  .toggle-button:focus {
+    box-shadow: 0 0 0 2px #ffffff33;
+  }
+  
+  .icon-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+  }
+  
+  .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.2s;
+  }
+  
+  .connect-icon {
+    opacity: 0;
+  }
+  
+  .disconnect-icon {
+    opacity: 1;
+  }
+  
+  /* When blocking */
+  .toggle-button.blocking {
+    background-color: #2a2b2e;
+  }
+  
+  .toggle-button.blocking:hover {
+    background-color: #3a3b3e;
+  }
+  
+  .toggle-button.blocking .connect-icon {
+    opacity: 1;
+  }
+  
+  .toggle-button.blocking .disconnect-icon {
+    opacity: 0;
+  }
+  
+  .interval-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+  }
+  
+  .interval-container label {
+    font-size: 14px;
+    color: #a0a0a0;
+  }
+  
+  #intervalInput {
+    border: 1px solid #006FD5;
+    background-color: #0D151D;
+    border-radius: 8px;
+    color: white;
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+  }
+  
+  #intervalInput:focus {
+    outline: none;
+    border-color: #006FD5;
+  }
+
+  /* Remove the up and down arrows from the input */
+  #intervalInput::-webkit-inner-spin-button,
+  #intervalInput::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-button {
+    flex: 1;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, all 0.2s ease;
+  }
+  
+  .action-button:not(.secondary) {
+    background-color: #006FD5;
+    color: white;
+  }
+  
+  .action-button:not(.secondary):hover {
+    background-color: #0052cc;
+  }
+  
+  .action-button.secondary {
+    background-color: #33368833;
+    color: white;
+  }
+  
+  .action-button.secondary:hover {
+    background-color: #3a3b3e;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    margin: -20px -20px 16px -20px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-button img {
+    width: 24px;
+    height: 24px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .close-button:hover img {
+    opacity: 1;
+  }
+
 }
