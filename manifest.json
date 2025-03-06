@@ -1,14 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Auto Image Blocker",
-  "version": "1.4",
-  "description": "Automatically block images on websites to reduce distractions and improve page load times. Customize intervals for automatic image blocking and easily toggle image settings manually.",
-  "permissions": ["contentSettings", "activeTab", "tabs", "alarms", "storage"],
+  "name": "Image Blocker",
+  "version": "2.0",
+  "description": "Simple image blocker that lets you instantly toggle images on websites with a single click. Reduce distractions and improve page load times.",
+  "permissions": ["contentSettings", "activeTab", "tabs", "storage"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_icon": {
+      "16": "assets/icons/disconnect-16.png",
+      "32": "assets/icons/disconnect-32.png",
+      "48": "assets/icons/disconnect-48.png",
+      "128": "assets/icons/disconnect-128.png"
+    }
   }
 }

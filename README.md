@@ -1,44 +1,69 @@
-# Chrome Extension Auto Image Blocker
+# Chrome Image Blocker
 
-Chrome Auto Image Blocker is a lightweight Chrome extension designed to improve your browsing experience by automatically blocking and toggling images on webpages based on a customizable schedule. Reduce distractions and speed up page load times with ease.
+## Repository Overview
+This repository contains a Chrome extension designed to block images on webpages with a simple click. The extension helps reduce distractions and improve page load times by controlling when images are displayed.
+
+## Purpose
+The main purpose of this extension is to:
+- Block or show images with a single click on the extension icon
+- Provide a quick visual indicator of the current state (images allowed or blocked)
+- Improve browsing experience by reducing visual distractions
+- Increase page load speed by preventing image loading
+
+## Repository Structure
+- `manifest.json`: Chrome extension configuration file
+- `background.js`: Core service worker implementation of the extension
+- `assets/`: Icons and resources for the extension
+  - `icons/`: Icons for the extension UI
+    - `connect.png`: Icon for the connected state (images allowed)
+    - `disconnect.png`: Icon for the disconnected state (images blocked)
+  - `screenshots/`: Example screenshots showing the extension in action
+    - Contains examples from YouTube and Instagram
+  - `promo-image/`: Marketing images for the Chrome Web Store
+- `icon.png`: Extension icon displayed in Chrome toolbar
+- `LICENSE`: MIT license file
+- `README.md`: Documentation and installation instructions
+
+## Key Features
+- One-click toggle to enable/disable images instantly
+- Visual indicator of current state through icon changes
+- Simple, lightweight interface
+- No setup required
+
+## Installation
+1. Clone the repository
+2. Load as unpacked extension in Chrome's developer mode
+3. Or install from the Chrome Web Store (if published)
+
+## How to Use
+1. Click the extension icon in your Chrome toolbar to toggle images on or off
+2. The icon will change to indicate the current state:
+   - Connected icon: Images are allowed
+   - Disconnected icon: Images are blocked
+
+## Development Guidelines
+- Maintain the simple, clean UI design
+- Keep performance impact minimal
+- Follow Chrome extension best practices
+- Test thoroughly on various websites
 
 ## Screenshots
 
-| ![YouTube example](/screenshots/screenshot-youtube-2.png) | ![Instagram example](/screenshots/screenshot-instagram-2.png) |
+| ![YouTube example](/assets/screenshots/screenshots-1.png) | ![Instagram example](/assets/screenshots/screenshots-2.png) |
 |:---------------------------------------------:|:---------------------------------------------:|
 | YouTube example                                  | Instagram example                                  |
 
 ## Features
 
-- Auto-blocks images every 10 minutes by default.
-- Manual toggle to enable or disable images instantly.
-- Customizable interval for automatic image blocking.
-- Simple interface.
-- Lightweight and efficient.
-
-## Installation
-
-1. Clone the repository:
-
-   ```sh
-   git clone https://github.com/kirill-markin/chrome-auto-image-blocker
-   ```
-
-2. Open Chrome and navigate to `chrome://extensions/`.
-
-3. Enable "Developer mode" in the top right corner.
-
-4. Click "Load unpacked" and select the directory where you cloned the repository.
-
-## Usage
-
-- Click the extension icon in the Chrome toolbar to open the popup.
-- Use the "Click to disconnect" button to enable or disable images manually.
-- Set your preferred interval for automatic image blocking.
+- Toggles images on or off with a single click
+- Visual feedback through icon changes
+- Simple, intuitive interface
+- No configuration needed
+- Lightweight and efficient
 
 ## How It Works
 
-This extension automatically changes Chrome's image settings to block or allow images based on your chosen schedule. You can also toggle this setting manually at any time.
+This extension changes Chrome's image settings to block or allow images with a single click. The extension icon updates to visually indicate whether images are currently allowed or blocked.
 
 ## Contributing
 
@@ -52,6 +77,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 If you have any questions, feel free to contact me at [markinkirill@gmail.com](mailto:markinkirill@gmail.com).
 
-## Issues
+## Authors
 
-If you encounter any issues or have feature requests, please report them in the [Issues](https://github.com/kirill-markin/chrome-auto-image-blocker/issues) section of the GitHub repository.
+This extension was created by 
+- [Kirill Markin](https://kirill-markin.com/)
+- [Maria Podobrazhnykh](https://www.linkedin.com/in/maria-podobrazhnykh/)
+- [Andrey Markin](https://andrey-markin.com/)
