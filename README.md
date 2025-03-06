@@ -20,6 +20,8 @@ The main purpose of this extension is to:
   - `screenshots/`: Example screenshots showing the extension in action
     - Contains examples from YouTube and Instagram
   - `promo-image/`: Marketing images for the Chrome Web Store
+- `scripts/`: Utility scripts for development and deployment
+  - `package.sh`: Script to package the extension into a ZIP file for Chrome Web Store submission
 - `icon.png`: Extension icon displayed in Chrome toolbar
 - `LICENSE`: MIT license file
 - `README.md`: Documentation and installation instructions
@@ -34,6 +36,12 @@ The main purpose of this extension is to:
 1. Clone the repository
 2. Load as unpacked extension in Chrome's developer mode
 3. Or install from the Chrome Web Store (if published)
+
+## Packaging for Chrome Web Store
+To package the extension for submission to the Chrome Web Store:
+1. Run the packaging script: `./scripts/package.sh`
+2. The script will create a `dist/extension.zip` file containing all necessary files
+3. Upload this ZIP file to the Chrome Web Store Developer Dashboard
 
 ## How to Use
 1. Click the extension icon in your Chrome toolbar to toggle images on or off
