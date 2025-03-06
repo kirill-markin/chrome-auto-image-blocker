@@ -1,0 +1,45 @@
+# Chrome Auto Image Blocker
+
+## Repository Overview
+This repository contains a Chrome extension designed to automatically block and toggle images on webpages based on a customizable schedule. The extension helps reduce distractions and improve page load times by controlling when images are displayed.
+
+## Purpose
+The main purpose of this extension is to:
+- Automatically block images at specified intervals (default: every 10 minutes)
+- Provide a quick manual toggle for enabling/disabling images
+- Improve browsing experience by reducing visual distractions
+- Increase page load speed by preventing image loading
+
+## Repository Structure
+- `manifest.json`: Chrome extension configuration file
+- `background.js`: Core service worker implementation of the extension
+- `popup.html`: HTML structure for the extension's popup UI
+- `popup.js`: JavaScript for handling user interactions in the popup
+- `style.css`: Styling for the extension's popup
+- `assets/`: SVG icons for the extension UI
+  - `connect.svg`: Icon for the connected state
+  - `disconnect.svg`: Icon for the disconnected state
+  - `close.svg`: Close button icon
+- `screenshots/`: Example screenshots showing the extension in action
+  - Contains examples from YouTube and Instagram
+- `promo-image/`: Marketing images for the Chrome Web Store
+- `icon.png`: Extension icon displayed in Chrome toolbar
+- `LICENSE`: MIT license file
+- `README.md`: Documentation and installation instructions
+
+## Key Features
+- Toggle button to enable/disable images instantly
+- Customizable interval for automatic image blocking
+- Simple, lightweight interface
+- Option to restart the automatic blocking timer
+
+## Installation
+1. Clone the repository
+2. Load as unpacked extension in Chrome's developer mode
+3. Or install from the Chrome Web Store (if published)
+
+## Development Guidelines
+- Maintain the simple, clean UI design
+- Keep performance impact minimal
+- Follow Chrome extension best practices
+- Test thoroughly on various websites
