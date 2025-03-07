@@ -20,47 +20,62 @@ async function getImageSettingForPattern(pattern) {
 
 async function getCurrentSetting() {
   const patterns = ["http://*/*", "https://*/*"];
-  const results = await Promise.all(patterns.map(getImageSettingForPattern));
-  return results[0]; // Assuming all patterns have the same setting
+  try {
+    const results = await Promise.all(patterns.map(getImageSettingForPattern));
+    return results[0]; // Assuming all patterns have the same setting
+  } catch (error) {
+    console.error("Error getting current setting:", error);
+    return "allow"; // Default to allow if there's an error
+  }
 }
 
 // Set images setting (allow or block)
 async function setImagesSetting(setting) {
-  return new Promise((resolve, reject) => {
-    chrome.contentSettings.images.set(
-      {
-        primaryPattern: "<all_urls>",
-        setting: setting,
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "Error setting new setting:",
-            chrome.runtime.lastError.message
-          );
-          reject(chrome.runtime.lastError);
-        } else {
-          console.log(
-            `Images are now ${setting === "allow" ? "allowed" : "blocked"}.`
-          );
-          // Save the current state to storage
-          chrome.storage.sync.set({ imagesSetting: setting }, () => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                "Error saving images setting:",
-                chrome.runtime.lastError.message
-              );
-            }
-          });
-          
-          // Update icon based on current state
-          updateIcon(setting);
-          
-          resolve();
+  const patterns = ["http://*/*", "https://*/*"];
+  const settingPromises = patterns.map(pattern => {
+    return new Promise((resolve, reject) => {
+      chrome.contentSettings.images.set(
+        {
+          primaryPattern: pattern,
+          setting: setting,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              `Error setting new setting for ${pattern}:`,
+              chrome.runtime.lastError.message
+            );
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
         }
-      }
-    );
+      );
+    });
   });
+
+  try {
+    await Promise.all(settingPromises);
+    console.log(`Images are now ${setting === "allow" ? "allowed" : "blocked"}.`);
+    
+    // Save the current state to storage
+    chrome.storage.sync.set({ imagesSetting: setting }, () => {
+      if (chrome.runtime.lastError) {
+        console.error(
+          "Error saving images setting:",
+          chrome.runtime.lastError.message
+        );
+      }
+    });
+    
+    // Update icon based on current state
+    updateIcon(setting);
+    
+    return true;
+  } catch (error) {
+    console.error("Error setting images setting:", error);
+    return false;
+  }
 }
 
 // Toggle images setting
@@ -68,14 +83,16 @@ async function toggleImagesSetting() {
   try {
     const currentSetting = await getCurrentSetting();
     const newSetting = currentSetting === "allow" ? "block" : "allow";
-    await setImagesSetting(newSetting);
-    refreshCurrentTab();
+    const success = await setImagesSetting(newSetting);
+    if (success) {
+      refreshCurrentTab();
+    }
   } catch (error) {
-    console.error(error.message);
+    console.error("Error toggling images setting:", error.message);
   }
 }
 
-// Refresh the current tab
+// Refresh the current tab using tabs.reload
 function refreshCurrentTab() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
@@ -125,12 +142,12 @@ async function applySavedImagesSetting() {
 
 // Event listeners
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("Extension installed or reloaded, applying saved image setting");
+  console.log("Extension installed or reloaded");
   applySavedImagesSetting();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  console.log("Browser startup, applying saved image setting");
+  console.log("Browser startup");
   applySavedImagesSetting();
 });
 
